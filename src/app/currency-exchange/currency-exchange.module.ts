@@ -1,33 +1,38 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
+import { CurrencyExchangeComponent } from './currency-exchange.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { HttpClientModule } from '@angular/common/http';
-
-import { AppComponent } from './app.component';
-import { CvComponent } from './cv/cv.component';
-import { Error404Component } from './error404/error404.component';
+import { RouterModule, Routes } from '@angular/router';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
+import { HttpClientModule } from '@angular/common/http';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: CurrencyExchangeComponent,
+  },
+
+  { path: '**', redirectTo: '/error', pathMatch: 'full' },
+];
 
 @NgModule({
-  declarations: [AppComponent, CvComponent, Error404Component],
+  declarations: [CurrencyExchangeComponent],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatToolbarModule,
+    MatButtonModule,
     MatTabsModule,
     FlexLayoutModule,
     MatIconModule,
@@ -36,9 +41,10 @@ import { MatButtonModule } from '@angular/material/button';
     HttpClientModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule,
+    RouterModule.forChild(routes),
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts'),
+    }),
   ],
-  providers: [],
-  bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class CurrencyExchangeModule {}

@@ -1,0 +1,108 @@
+<mat-tab-group mat-align-tabs="center">
+  <mat-tab label="Generic">
+    <div fxLayoutAlign="space-around space-around">
+      <div fxLayout="column" fxLayoutAlign="start start" class="margin">
+        <div>
+          <div class="typography--46 typography--46-bold typography--46-blue margin line-height">Nazar Kapushchak
+          </div>
+          <div class="typography--20 typography--20-red margin">FRONTEND DEVELOPER</div>
+        </div>
+        <div>
+          <div class="typography--20 typography--20-bold typography--20-blue margin">PROFILE</div>
+          <div class="typography--16 typography--16-bold typography--16-blue margin">English - Intermediate</div>
+        </div>
+        <div>
+          <div class="typography--20 typography--20-bold typography--20-blue margin">EDUCATION</div>
+          <div class="typography--16 typography--16-bold typography--16-blue margin">Master's Degree of Oil and Gas
+            engineering
+          </div>
+        </div>
+        <div>
+          <div class="typography--20 typography--20-bold typography--20-blue margin">SKILLS</div>
+          <div>
+            <ul class="typography--16 typography--16-blue margin">
+              <li>Fast learning</li>
+              <li>Creative, analytics and critical thinking</li>
+              <li>Responsibility</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div fxLayout="column" fxLayoutAlign="space-around start" class="margin">
+        <div class="image" fxFlexAlign="center">
+          <img class="image-border" src="../../assets/image/myPhoto.jpg" alt="">
+        </div>
+        <div class="typography--20 typography--20-bold typography--20-red margin">
+          ADDITIONAL INFO
+        </div>
+        <div class="margin">
+          <div class="typography--18 typography--18-bold typography--18-blue">
+            Soft
+          </div>
+          <div>
+            <ul class="typography--16 typography--16-blue">
+              <li>Good knowing of JavaScript (HTML, CSS, SCSS, Angular, TypeScript, React), GitHub, GitBash, Prepros,
+                Visual Studio</li>
+              <li>Google Apps Suite; CRM (HubSpot); Asana; Jira; Kanban board; Reply(Email); Meet Alfred(LinkedIn);
+                Trello; Figma; Slack</li>
+            </ul>
+          </div>
+        </div>
+        <div class="margin">
+          <div class="typography--18 typography--18-bold typography--18-blue">
+            Online courses
+          </div>
+          <div>
+            <ul class="typography--16 typography--16-blue">
+              <li>Vladilen Minin: <span class="typography--16 typography--16-bold typography--16-blue">Angular 9. Теория
+                  и
+                  Практика
+                  2020.</span> </li>
+              <li>Vladilen Minin: <span class="typography--16 typography--16-bold typography--16-blue">React JS.
+                  Практический Курс 2020 (вкл.
+                  Хуки, Классы, Redux)</span> </li>
+              <li>Brad Traversy: <span class="typography--16 typography--16-bold typography--16-blue">Modern JavaScript
+                  From The
+                  Beginning</span> </li>
+            </ul>
+          </div>
+        </div>
+        <div class="margin">
+          <div class="typography--18 typography--18-bold typography--18-blue ">
+            Additional activities
+          </div>
+          <div>
+            <ul>
+              <li class="typography--16 typography--16-blue">Making own healthcare application "SafeEye"
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Work experience">
+    <div>
+      <mat-list>
+        <div class="typography--18" mat-subheader>Work experience</div>
+        <mat-list-item *ngFor="let work of works" fxLayout="row" fxLayoutGap="45px">
+          <div mat-line class="typography--18 typography--18-bold"> {{work.title}} </div>
+          <div mat-line class="typography--18">{{work.organization}}</div>
+          <div mat-line class="typography--18"> {{work.date }} </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-tab>
+  <mat-tab label="Contact">
+    <div>
+      <mat-list>
+        <div class="typography--18" mat-subheader>Contact Info</div>
+        <mat-list-item *ngFor="let contact of contacts">
+          <mat-icon mat-list-icon>{{contact.img}}</mat-icon>
+          <div mat-line>{{contact.name}}</div>
+          <div mat-line class="typography--18"> {{contact.date }} </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-tab>
+</mat-tab-group>

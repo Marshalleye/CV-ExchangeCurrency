@@ -1,1 +1,85 @@
-/* You can add global styles to this file, and also import other style files */
+@import "app/styles/variables";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+img {
+  max-width: 100%;
+}
+
+.container {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+.margin {
+  margin: 20px;
+  &-top-30 {
+    margin-top: 30px;
+  }
+}
+
+.text-align {
+  text-align: center;
+}
+
+.line-height {
+  line-height: 90%;
+}
+
+.image {
+  width: 200px;
+  &-border {
+    border-radius: 50%;
+  }
+}
+
+.typography--16 {
+  font-size: 16px;
+  &-bold {
+    font-weight: 800;
+  }
+
+  &-blue {
+    color: $app-blue;
+  }
+}
+
+.typography--18 {
+  font-size: 18px !important ;
+  &-bold {
+    font-weight: 800 !important ;
+  }
+  &-blue {
+    color: $app-blue;
+  }
+}
+
+.typography--20 {
+  font-size: 20px;
+  &-bold {
+    font-weight: 800;
+  }
+  &-red {
+    color: $app-red;
+  }
+  &-blue {
+    color: $app-blue;
+  }
+}
+
+.typography--46 {
+  font-size: 46px;
+  &-bold {
+    font-weight: 800;
+  }
+  &-blue {
+    color: $app-blue;
+  }
+}

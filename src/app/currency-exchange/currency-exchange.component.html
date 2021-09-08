@@ -1,0 +1,62 @@
+<div fxLayout class="margin" fxLayoutGap="20px" fxLayoutAlign="center">
+
+  <div>
+    <mat-form-field appearance="legacy">
+      <mat-label>Currency</mat-label>
+      <mat-select (selectionChange)="currencyService.setCurrencyVal($event)">
+        <mat-option *ngFor="let date of startApiDate | async" [value]="date.cc">{{date.txt}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div fxLayoutGap="20px">
+    <mat-form-field appearance="legacy">
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+        <input matStartDate formControlName="start" placeholder="Start date"
+          (dateChange)="currencyService.startDateValueChange($event)">
+        <input matEndDate formControlName="end" placeholder="End date"
+          (dateChange)="currencyService.endDateValueChange($event)">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker>
+        <mat-date-range-picker-actions>
+          <button mat-button matDateRangePickerCancel>Cancel</button>
+          <button mat-raised-button color="primary" matDateRangePickerApply>Apply</button>
+        </mat-date-range-picker-actions>
+      </mat-date-range-picker>
+      <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+      <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div fxLayoutGap="20px">
+    <button mat-flat-button color="primary" (click)="currencyService.setTable()" (click)="toggle=false"
+      [disabled]="currencyService.dateDiff === null">Table</button>
+    <button mat-flat-button color="primary" (click)="currencyService.setChart()" (click)="toggle=true"
+      [disabled]="currencyService.dateDiff === null">
+      Chart
+    </button>
+  </div>
+
+</div>
+
+
+
+<div *ngIf="toggle">
+  <div echarts [options]="currencyService.chart" class="demo-chart"></div>
+</div>
+
+<ng-template [ngIf]="!toggle">
+  <div fxLayoutAlign="center">
+    <mat-list>
+      <div class="typography--18" mat-subheader>Currency Exchange: UAH to {{currencyService.currencySelectValue}}
+      </div>
+      <mat-list-item *ngFor="let date of currencyService.finalDate " fxLayout="row" fxLayoutGap="45px">
+        <div mat-line class="typography--18 typography--18-bold"> {{date.exchangedate}} </div>
+        <div mat-line class="typography--18">Rate for 1 UAH : {{date.rate}} {{currencyService.currencySelectValue}}
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</ng-template>
