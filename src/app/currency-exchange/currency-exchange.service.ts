@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
-import { Observable, range } from 'rxjs';
+import { Observable } from 'rxjs';
 import { concatMap, map, scan } from 'rxjs/operators';
 
-import { Api, Currency } from './api.model';
+import { Api, BigCurrency, Currency } from './api.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,32 +13,33 @@ export class CurrencyExchangeService {
     urlNew: `https://bank.gov.ua/NBUStatService/v1/statdirectory/exchangenew?json`,
     urlCurrency: `https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange`,
   };
-
-  startDate: string | any;
-  endDate: string | any;
-  dateDiff: number | any = null;
+  pickerStartDateValue: number;
+  pickerEndDateValue: number;
+  startDate: string;
+  dateDiff: number = 0;
   currencySelectValue: string = 'select currency';
-
   chart: any;
-  finalDate: any = [];
+  loader: boolean = false;
 
-  fetch$: any;
+  finalDate: Array<Currency> = [];
+  dateArr: Array<string> = [];
+
   range$: any;
   constructor(private http: HttpClient) {}
 
-  fetchStartVal(): Observable<Currency[]> {
-    return this.http.get<Currency[]>(this.api.urlNew);
+  fetchStartVal(): Observable<BigCurrency[]> {
+    return this.http.get<BigCurrency[]>(this.api.urlNew);
   }
 
   fetchData(num: number): Observable<Currency[]> {
     return this.http.get<Currency[]>(
-      `${this.api.urlCurrency}?valcode=USD&date=${String(
-        +this.startDate + num
-      )}&json`
+      `${this.api.urlCurrency}?valcode=${this.currencySelectValue}&date=${this.dateArr[num]}&json`
     );
   }
 
   fetchStream(): Observable<Currency[]> {
+    this.loader = true;
+
     return this.range$
       .pipe(
         concatMap((val: number) => {
@@ -60,47 +60,86 @@ export class CurrencyExchangeService {
         (err: Error) => console.log(err),
         () => {
           this.getChart();
+          this.loader = false;
         }
       );
   }
+
   startDateValueChange({ value }: any): void {
-    let day = value.getDate();
-    let month = value.getMonth();
-    let year = value.getFullYear();
-    this.startDate = `${year}${month < 10 ? `0${month + 1}` : month + 1}${
-      day < 10 ? `0${day}` : day
-    }`;
+    this.pickerStartDateValue = value.getTime();
+    this.startDate = this.formatDateToString(value);
+    this.dateArr = [];
   }
+
   endDateValueChange({ value }: any): void {
-    let day = value.getDate();
-    let month = value.getMonth();
-    let year = value.getFullYear();
-    this.endDate = `${year}${month < 10 ? `0${month + 1}` : month + 1}${
+    this.pickerEndDateValue = value.getTime();
+
+    this.getDiffDate(this.pickerStartDateValue, this.pickerEndDateValue);
+    this.getDateArrCount();
+  }
+
+  getDateArrCount(): void {
+    let lastDay: number = parseInt(
+      this.startDate.slice(this.startDate.length - 2, this.startDate.length)
+    );
+    let lastMonth: number = parseInt(
+      this.startDate.slice(this.startDate.length - 4, this.startDate.length - 2)
+    );
+    let lastYear: number = parseInt(
+      this.startDate.slice(this.startDate.length - 8, this.startDate.length - 4)
+    );
+
+    for (let index = 0; index < this.dateDiff; index++) {
+      if (lastDay < this.monthMaxDateNumber(lastMonth) && lastMonth <= 12) {
+        this.dateArr.push(
+          `${lastYear}${lastMonth < 10 ? `0${lastMonth}` : lastMonth}${
+            lastDay < 10 ? `0${lastDay}` : lastDay
+          }`
+        );
+        lastDay++;
+      }
+      if (lastDay === this.monthMaxDateNumber(lastMonth) && lastMonth < 12) {
+        this.dateArr.push(
+          `${lastYear}${lastMonth < 10 ? `0${lastMonth}` : lastMonth}${
+            lastDay < 10 ? `0${lastDay}` : lastDay
+          }`
+        );
+        ++lastMonth;
+        lastDay = 1;
+      }
+      if (lastDay === this.monthMaxDateNumber(lastMonth) && lastMonth === 12) {
+        this.dateArr.push(
+          `${lastYear}${lastMonth < 10 ? `0${lastMonth}` : lastMonth}${
+            lastDay < 10 ? `0${lastDay}` : lastDay
+          }`
+        );
+        ++lastYear;
+        lastMonth = 1;
+        lastDay = 1;
+      }
+    }
+  }
+
+  formatDateToString(date: Date): string {
+    let day = date.getDate();
+    let month = date.getMonth();
+    let year = date.getFullYear();
+    return `${year}${month < 10 ? `0${month + 1}` : month + 1}${
       day < 10 ? `0${day}` : day
     }`;
-    this.getDiffDate(this.startDate, this.endDate);
   }
 
   getDiffDate(startDate: number, endDate: number): void {
-    this.dateDiff = endDate - startDate;
+    this.dateDiff = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
   }
 
-  setCurrencyVal({ value }: MatSelectChange): void {
-    this.currencySelectValue = value;
+  monthMaxDateNumber(x: number): number {
+    return 28 + ((x + Math.floor(x / 8)) % 2) + (2 % x) + 2 * Math.floor(1 / x);
   }
 
-  setChart() {
-    this.range$ = range(0, ++this.dateDiff);
-    this.fetchStream();
-  }
-
-  setTable() {
-    this.range$ = range(0, ++this.dateDiff);
-    this.fetchStream();
-  }
   getChart() {
-    const xAxisData: any = [];
-    const data1: any = [];
+    const xAxisData: Array<string> = [];
+    const data1: Array<number> = [];
     for (let char in { ...this.finalDate }) {
       data1.push({ ...this.finalDate }[char].rate);
       xAxisData.push({ ...this.finalDate }[char].exchangedate);
@@ -127,11 +166,11 @@ export class CurrencyExchangeService {
           name: `UAH to ${this.currencySelectValue}`,
           type: 'line',
           data: data1,
-          animationDelay: (idx: any) => idx * 50,
+          animationDelay: (idx: number) => idx * 50,
         },
       ],
       animationEasing: 'elasticOut',
-      animationDelayUpdate: (idx: any) => idx * 50,
+      animationDelayUpdate: (idx: number) => idx * 50,
     };
   }
 }

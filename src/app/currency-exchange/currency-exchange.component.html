@@ -3,7 +3,7 @@
   <div>
     <mat-form-field appearance="legacy">
       <mat-label>Currency</mat-label>
-      <mat-select (selectionChange)="currencyService.setCurrencyVal($event)">
+      <mat-select (selectionChange)="setCurrencyVal($event)">
         <mat-option *ngFor="let date of startApiDate | async" [value]="date.cc">{{date.txt}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -31,9 +31,9 @@
   </div>
 
   <div fxLayoutGap="20px">
-    <button mat-flat-button color="primary" (click)="currencyService.setTable()" (click)="toggle=false"
+    <button mat-flat-button color="primary" (click)="setTable()" (click)="toggle=false"
       [disabled]="currencyService.dateDiff === null">Table</button>
-    <button mat-flat-button color="primary" (click)="currencyService.setChart()" (click)="toggle=true"
+    <button mat-flat-button color="primary" (click)="setChart()" (click)="toggle=true"
       [disabled]="currencyService.dateDiff === null">
       Chart
     </button>
@@ -42,21 +42,30 @@
 </div>
 
 
+<div *ngIf="!currencyService.loader">
+  <div *ngIf="toggle">
+    <div echarts [options]="currencyService.chart" class="demo-chart"></div>
+  </div>
 
-<div *ngIf="toggle">
-  <div echarts [options]="currencyService.chart" class="demo-chart"></div>
+  <ng-template [ngIf]="!toggle">
+    <div fxLayoutAlign="center">
+      <mat-list>
+        <div class="typography--18" mat-subheader>Currency Exchange: UAH to {{currencyService.currencySelectValue}}
+        </div>
+        <mat-list-item *ngFor="let date of currencyService.finalDate " fxLayout="row" fxLayoutGap="45px">
+          <div mat-line class="typography--18 typography--18-bold"> {{date.exchangedate}} </div>
+          <div mat-line class="typography--18">Rate for 1 {{currencyService.currencySelectValue}} : {{date.rate |number:
+            '1.1-2'}}
+            UAH
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </ng-template>
 </div>
 
-<ng-template [ngIf]="!toggle">
-  <div fxLayoutAlign="center">
-    <mat-list>
-      <div class="typography--18" mat-subheader>Currency Exchange: UAH to {{currencyService.currencySelectValue}}
-      </div>
-      <mat-list-item *ngFor="let date of currencyService.finalDate " fxLayout="row" fxLayoutGap="45px">
-        <div mat-line class="typography--18 typography--18-bold"> {{date.exchangedate}} </div>
-        <div mat-line class="typography--18">Rate for 1 UAH : {{date.rate}} {{currencyService.currencySelectValue}}
-        </div>
-      </mat-list-item>
-    </mat-list>
+<ng-template [ngIf]="currencyService.loader">
+  <div class="image image-center">
+    <img src="https://icons8.com/preloaders/preloaders/1494/Spinner-2.gif">
   </div>
 </ng-template>
