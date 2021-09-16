@@ -158,9 +158,21 @@ export class CurrencyExchangeService {
           show: false,
         },
       },
-      yAxis: {
-        type: 'value',
-      },
+      yAxis: [
+        {
+          type: 'value',
+          min: function (value: any) {
+            return value.min;
+          },
+          max: function (value: any) {
+            return value.max;
+          },
+          axisLine: {
+            show: true,
+            symbol: 'pin',
+          },
+        },
+      ],
       series: [
         {
           name: `UAH to ${this.currencySelectValue}`,
